@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Advanced Event Management System</title>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        font-src 'self' https://cdnjs.cloudflare.com;
+        style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        img-src 'self' blob: data:;
+    ">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider/distribute/nouislider.min.css">
+        <style>
+    :root {
+   
+    --primary-color: #0066cc;
+    --secondary-color: #5a6268;
+    --background-color: #f4f4f4;
+    --text-color: #333333;
+    --card-background: #ffffff;
+    --border-color: #d1d1d1;
+    --hover-color: rgba(0, 0, 0, 0.05);
+    --link-color: #0066cc;
+
+    
+    --button-background: #0066cc;
+    --button-text: #ffffff;
+    --input-background: #ffffff;
+
+    
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --text-shadow: none;
+
+    
+    --font-size: 16px;
+    --line-height: 1.6;
+
+    
+    --transition-speed: 0.3s;
+    --border-radius: 8px;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    margin: 0;
+    padding: 0;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    
+    
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+
+
+body.dark-mode {
+    --primary-color: #4da6ff;
+    --secondary-color: #a1a8ae;
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --card-background: #1e1e1e;
+    --border-color: #3a3a3a;
+    --hover-color: rgba(255, 255, 255, 0.1);
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --link-color: #6db4ff;
+    --input-background: #2c2c2c;
+    --button-background: #2a5a8a;
+    --text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+
+body.high-contrast {
+    --primary-color: #ffff00;
+    --secondary-color: #00ffff;
+    --background-color: #000000;
+    --text-color: #ffffff;
+    --card-background: #000000;
+    --border-color: #ffffff;
+    --hover-color: rgba(255, 255, 255, 0.2);
+    --box-shadow: 0 4px 6px rgba(255, 255, 255, 0.3);
+    --link-color: #ff00ff;
+    --input-background: #000000;
+    --button-background: #ffff00;
+    --button-text: #000000;
+}
+.cookie-consent {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    z-index: 1000;
+}
+
+.cookie-consent.show {
+    display: block;
+}
+
+
+.event-card {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition-speed) ease-in-out;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(15, 14, 14, 0.856);
+    background-color: var(--hover-color);
+}
+
+
+.star-rating {
+    color: #ffc107;
+    font-size: 1.3em;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 10px;
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+}
+
+.slider {
+    background-color: var(--secondary-color);
+    border-radius: 34px;
+    cursor: pointer;
+    transition: var(--transition-speed);
+    height: 26px;
+    width: 50px;
+    position: relative;
+}
+
+.slider:before {
+    content: '';
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--background-color);
+    border-radius: 50%;
+    transition: var(--transition-speed);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+
+.nav-tabs .nav-link {
+    color: var(--text-color);
+    font-weight: 500;
+    padding: 10px 15px;
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: bold;
+    border-bottom-color: var(--primary-color);
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--primary-color);
+    background-color: var(--hover-color);
+}
+
+
+.event-series-indicator,
+.tag,
+.notification,
+.real-time-indicator {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+
+.comment {
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+    margin-bottom: 15px;
+}
+
+
+.accessibility-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    background-color: var(--card-background);
+    padding: 15px;
+    border-radius: var(--border-radius);
+}
+
+.font-size-control button,
+.high-contrast-toggle {
+    background-color: var(--button-background);
+    color: var(--button-text);
+    border: 2px solid var(--border-color);
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: all var(--transition-speed);
+}
+
+.font-size-control button:hover,
+.high-contrast-toggle:hover {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    transform: scale(1.05);
+}
+
+
+body.dark-mode,
+body.high-contrast {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode .text-content,
+body.high-contrast .text-content {
+    line-height: 1.8;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: underline;
+}
+
+.card {
+    border: 2px solid var(--border-color);
+}
+
+
+input,
+textarea {
+    background-color: var(--input-background);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+    padding: 10px;
+    border-radius: var(--border-radius);
+}
+
+
+button {
+    background-color: var(--button-background);
+    color: var(--button-text);
+    border: 2px solid var(--border-color);
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    text-shadow: var(--text-shadow);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    background-color: var(--primary-color); /* Fallback */
+    background-color: rgba(var(--primary-color-rgb), 0.9); /* Semi-transparent */
+    background-color: rgb(calc(var(--primary-color-r) * 0.9), calc(var(--primary-color-g) * 0.9), calc(var(--primary-color-b) * 0.9)); /* Darkened version, more modern browsers */
+}
+
+/* Focus States */
+*:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High Contrast Borders */
+.high-contrast .event-card,
+.high-contrast .accessibility-controls,
+.high-contrast .theme-switch-wrapper,
+.high-contrast .cookie-consent {
+    border: 2px solid var(--text-color);
+}
+
+.high-contrast .nav-tabs .nav-link.active,
+.high-contrast .event-series-indicator,
+.high-contrast .tag,
+.high-contrast .notification,
+.high-contrast .real-time-indicator {
+    border: 2px solid var(--text-color);
+    font-weight: bolder;
+}
+
+/* Media Query for Responsiveness */
+@media (max-width: 768px) {
+    :root {
+        --font-size: 14px;
+    }
+
+    .accessibility-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .event-card {
+        padding: 15px;
+    }
+}
+
+
+.some-element {
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.box-element {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.flex-element {
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.text-align-element {
+    text-align: -webkit-match-parent;
+    text-align: inherit;
+    text-align: match-parent;
+}
+
+        </style>
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#" data-i18n="navTitle">Advanced Event Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="searchBtn" data-i18n="navSearch">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="addEventBtn" data-i18n="navAddEvent">
+                            <i class="fas fa-plus"></i> Add Event
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#statsModal" data-i18n="navStats">
+                            <i class="fas fa-chart-bar"></i> Statistics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="exportBtn" data-i18n="navExport">
+                            <i class="fas fa-file-export"></i> Export Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="authButton" onclick="showAuthModal()" data-i18n="navAuth">Login / Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="theme-switch-wrapper">
+                            <label class="theme-switch" for="darkModeToggle">
+                                <input type="checkbox" id="darkModeToggle" aria-label="Toggle dark mode" />
+                                <div class="slider round"></div>
+                            </label>
+                            <span class="ms-2 text-light" data-i18n="navDarkMode">Dark Mode</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="language-selector">
+        <button id="languageToggle" class="btn btn-secondary">
+            <i class="fas fa-globe"></i> Change Language
+        </button>
+    </div>
+    
+
+    <div id="notification" class="notification"></div>
+
+    <div class="container mt-4">
+        <div class="accessibility-controls">
+            <div class="font-size-control">
+                <span>Font Size:</span>
+                <button type="button" id="decreaseFontSize" class="btn btn-sm btn-secondary">A-</button>
+                <button type="button" id="resetFontSize" class="btn btn-sm btn-secondary">Reset</button>
+                <button type="button" id="increaseFontSize" class="btn btn-sm btn-secondary">A+</button>
+            </div>
+            <div class="high-contrast-toggle">
+                <input type="checkbox" id="highContrastToggle">
+                <label for="highContrastToggle">High Contrast</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8" id="mainContent">
+                <!-- Event list will be displayed here -->
+            </div>
+            <div class="col-md-4" id="sideContent">
+                <!-- Search, Add Event, or other content will be displayed here -->
+            </div>
+        </div>
+    </div>
+    
+
+    <div id="cookieConsent" class="alert alert-info text-center cookie-consent">
+        <p>
+            <span data-i18n="cookieConsent">This website uses cookies to ensure you get the best experience on our website.</span>
+            <button id="cookieConsentOK" class="btn btn-primary btn-sm ml-2" data-i18n="cookieConsentOK">Got it!</button>
+        </p>
+    </div>
+    
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden" data-i18n="loading">Loading...</span>
+        </div>
+    </div>
+
+    <div class="real-time-indicator" id="realTimeIndicator">
+        Real-time updates active
+    </div>
+<div class="modal fade" id="statsModal" tabindex="-1" aria-labelledby="statsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statsModalLabel" data-i18n="statsModalTitle">Event Statistics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title" data-i18n="overallStats">Overall Statistics</h6>
+                                <p><strong data-i18n="totalEvents">Total Events:</strong> <span id="totalEvents"></span></p>
+                                <p><strong data-i18n="totalAttendees">Total Attendees:</strong> <span id="totalAttendees"></span></p>
+                                <p><strong data-i18n="averageCapacity">Average Capacity:</strong> <span id="averageCapacity"></span></p>
+                                <p><strong data-i18n="averageRating">Average Rating:</strong> <span id="averageRating"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title" data-i18n="eventsByCategory">Events by Category</h6>
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title" data-i18n="attendanceOverTime">Attendance Over Time</h6>
+                                <canvas id="attendanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title" data-i18n="topEvents">Top 5 Events</h6>
+                                <ul id="topEventsList" class="list-group"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="close">Close</button>
+                <button type="button" class="btn btn-primary" id="exportStatsBtn" data-i18n="exportStats">Export Statistics</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventDetailsModalLabel" data-i18n="eventDetailsModalTitle">Event Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="eventDetailsModalBody">
+                <div class="row">
+                    <div class="col-lg-6 mb-3 mb-lg-0">
+                        <img id="eventImage" src="" alt="Event Image" class="img-fluid rounded">
+                    </div>
+                    <div class="col-lg-6">
+                        <h4 id="eventName" class="mb-3"></h4>
+                        <p id="eventDescription" class="mb-3"></p>
+                        <div class="row">
+                            <div class="col-sm-6 mb-2">
+                                <strong data-i18n="date">Date:</strong> <span id="eventDate"></span>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <strong data-i18n="location">Location:</strong> <span id="eventLocation"></span>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <strong data-i18n="capacity">Capacity:</strong> <span id="eventCapacity"></span>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <strong data-i18n="price">Price:</strong> <span id="eventPrice"></span>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <strong data-i18n="category">Category:</strong> <span id="eventCategory"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h5 data-i18n="attendees">Attendees:</h5>
+                    <ul id="attendeesList" class="list-group list-group-flush"></ul>
+                </div>
+                <div class="mt-4">
+                    <h5 data-i18n="ratings">Ratings:</h5>
+                    <div id="eventRating" class="star-rating"></div>
+                </div>
+                <div class="mt-4">
+                    <h5 data-i18n="comments">Comments:</h5>
+                    <div id="commentSection"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="close">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registrationModalLabel" data-i18n="registrationModalTitle">Event Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="eventRegistrationForm">
+                    <div class="mb-3">
+                        <label for="registrationName" class="form-label" data-i18n="nameLabel">Full Name</label>
+                        <input type="text" class="form-control" id="registrationName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registrationEmail" class="form-label" data-i18n="emailLabel">Email address</label>
+                        <input type="email" class="form-control" id="registrationEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registrationPhone" class="form-label" data-i18n="phoneLabel">Phone Number</label>
+                        <input type="tel" class="form-control" id="registrationPhone">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="submitRegistration">Submit Registration</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="authModalLabel" data-i18n="authModalTitle">Login / Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="authTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true" data-i18n="loginTab">Login</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false" data-i18n="registerTab">Register</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="authTabContent">
+                    <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="loginEmail" class="form-label" data-i18n="emailLabel">Email address</label>
+                                <input type="email" class="form-control" id="loginEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginPassword" class="form-label" data-i18n="passwordLabel">Password</label>
+                                <input type="password" class="form-control" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" data-i18n="loginButton">Login</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                        <form id="registerForm">
+                            <div class="mb-3">
+                                <label for="registerName" class="form-label" data-i18n="nameLabel">Full Name</label>
+                                <input type="text" class="form-control" id="registerName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerEmail" class="form-label" data-i18n="emailLabel">Email address</label>
+                                <input type="email" class="form-control" id="registerEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerPassword" class="form-label" data-i18n="passwordLabel">Password</label>
+                                <input type="password" class="form-control" id="registerPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerPhone" class="form-label" data-i18n="phoneLabel">Phone Number</label>
+                                <input type="tel" class="form-control" id="registerPhone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerRole" class="form-label" data-i18n="roleLabel">Role</label>
+                                <select class="form-select" id="registerRole" required>
+                                    <option value="user" data-i18n="roleUser">User</option>
+                                    <option value="organizer" data-i18n="roleOrganizer">Organizer</option>
+                                    <option value="admin" data-i18n="roleAdmin">Admin</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" data-i18n="registerButton">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <template id="addEventTemplate">
+        <form id="eventForm" class="sticky-top">
+            <h2 id="formTitle" class="mb-3" data-i18n="addEventTitle">Add New Event</h2>
+            <input type="hidden" id="eventId">
+
+            <ul class="nav nav-tabs mb-3" id="eventFormTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="details-tab" data-bs-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true" data-i18n="detailsTab">Details</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="media-tab" data-bs-toggle="tab" href="#media" role="tab" aria-controls="media" aria-selected="false" data-i18n="mediaTab">Media</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="advanced-tab" data-bs-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false" data-i18n="advancedTab">Advanced</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="eventFormTabContent">
+                <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                    <div class="mb-3">
+                        <label for="eventName" class="form-label" data-i18n="eventNameLabel">Event Name</label>
+                        <input type="text" class="form-control" id="eventName" required>
+                        <div class="invalid-feedback" id="nameError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventDescription" class="form-label" data-i18n="eventDescriptionLabel">Event Description</label>
+                        <textarea class="form-control" id="eventDescription" rows="3" required></textarea>
+                        <div class="invalid-feedback" id="descriptionError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventDateTime" class="form-label" data-i18n="eventDateTimeLabel">Event Date & Time</label>
+                        <input type="text" class="form-control" id="eventDateTime" required>
+                        <div class="invalid-feedback" id="dateTimeError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventLocation" class="form-label" data-i18n="eventLocationLabel">Event Location</label>
+                        <input type="text" class="form-control" id="eventLocation" required>
+                        <div class="invalid-feedback" id="locationError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventCapacity" class="form-label" data-i18n="eventCapacityLabel">Capacity</label>
+                        <input type="number" class="form-control" id="eventCapacity" required min="1">
+                        <div class="invalid-feedback" id="capacityError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventPrice" class="form-label" data-i18n="eventPriceLabel">Price ($)</label>
+                        <input type="number" class="form-control" id="eventPrice" step="0.01" required min="0">
+                        <div class="invalid-feedback" id="priceError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventMapURL" class="form-label" data-i18n="eventMapURLLabel">Event Location (Google Maps URL)</label>
+                        <input type="url" class="form-control" id="eventMapURL">
+                        <div class="invalid-feedback" id="mapError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventCategory" class="form-label" data-i18n="eventCategoryLabel">Event Category</label>
+                        <select class="form-select" id="eventCategory" required>
+                            <option value="" data-i18n="selectCategory">Select a category</option>
+                            <option value="Conference" data-i18n="categoryConference">Conference</option>
+                            <option value="Workshop" data-i18n="categoryWorkshop">Workshop</option>
+                            <option value="Seminar" data-i18n="categorySeminar">Seminar</option>
+                            <option value="Networking" data-i18n="categoryNetworking">Networking</option>
+                            <option value="Other" data-i18n="categoryOther">Other</option>
+                        </select>
+                        <div class="invalid-feedback" id="categoryError"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eventTags" class="form-label" data-i18n="eventTagsLabel">Event Tags (comma-separated)</label>
+                        <input type="text" class="form-control" id="eventTags">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="media" role="tabpanel" aria-labelledby="media-tab">
+                    <div class="mb-3">
+                        <label for="eventImage" class="form-label" data-i18n="eventImageLabel">Event Image</label>
+                        <input type="file" class="form-control" id="eventImage" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventVideo" class="form-label" data-i18n="eventVideoLabel">Event Video</label>
+                        <input type="file" class="form-control" id="eventVideo" accept="video/*">
+                    </div>
+                    <div id="mediaPreview"></div>
+                </div>
+                <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
+                    <div class="mb-3">
+                        <label for="eventSeries" class="form-label" data-i18n="eventSeriesLabel">Event Series</label>
+                        <select class="form-select" id="eventSeries">
+                            <option value="" data-i18n="selectSeries">Select a series</option>
+                            <option value="weekly" data-i18n="seriesWeekly">Weekly</option>
+                            <option value="monthly" data-i18n="seriesMonthly">Monthly</option>
+                            <option value="yearly" data-i18n="seriesYearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventVisibility" class="form-label" data-i18n="eventVisibilityLabel">Event Visibility</label>
+                        <select class="form-select" id="eventVisibility">
+                            <option value="public" data-i18n="visibilityPublic">Public</option>
+                            <option value="private" data-i18n="visibilityPrivate">Private</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventRegistrationDeadline" class="form-label" data-i18n="eventRegistrationDeadlineLabel">Registration Deadline</label>
+                        <input type="text" class="form-control" id="eventRegistrationDeadline">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3" id="saveBtn" data-i18n="saveEventButton">Save Event</button>
+            <button type="button" class="btn btn-secondary mt-3" id="resetFormBtn" data-i18n="resetFormButton">Reset Form</button>
+        </form>
+    </template>
+
+    <template id="searchTemplate">
+        <div class="search-container">
+            <h2 class="mb-3" data-i18n="searchEventsTitle">Search Events</h2>
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" data-i18n-placeholder="searchPlaceholder" placeholder="Search events...">
+            </div>
+            <div class="mb-3">
+                <select id="categoryFilter" class="form-select" aria-label="Filter events by category">
+                    <option value="" data-i18n="allCategories">All Categories</option>
+                    <option value="Conference" data-i18n="categoryConference">Conference</option>
+                    <option value="Workshop" data-i18n="categoryWorkshop">Workshop</option>
+                    <option value="Seminar" data-i18n="categorySeminar">Seminar</option>
+                    <option value="Networking" data-i18n="categoryNetworking">Networking</option>
+                    <option value="Other" data-i18n="categoryOther">Other</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="dateRangeSlider" class="form-label" data-i18n="dateRangeLabel">Date Range</label>
+                <div id="dateRangeSlider"></div>
+                <div class="mt-2">
+                    <span id="dateRangeStart"></span> - <span id="dateRangeEnd"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="priceRangeSlider" class="form-label" data-i18n="priceRangeLabel">Price Range</label>
+                <div id="priceRangeSlider"></div>
+                <div class="mt-2">
+                    <span id="priceRangeStart"></span> - <span id="priceRangeEnd"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="tagFilter" class="form-label" data-i18n="tagFilterLabel">Filter by Tags</label>
+                <input type="text" id="tagFilter" class="form-control" data-i18n-placeholder="tagFilterPlaceholder" placeholder="Enter tags...">
+            </div>
+            <button id="applyFilters" class="btn btn-primary" data-i18n="applyFiltersButton">Apply Filters</button>
+        </div>
+    </template>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18next/i18next.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nouislider/distribute/nouislider.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+let currentEventId = null;
+let currentUser = null;
+let editingEventId = null;
+let currentPage = 1;
+const eventsPerPage = 6;
+
+const mockApi = {
+    events: JSON.parse(localStorage.getItem('events')) || [],
+    users: JSON.parse(localStorage.getItem('users')) || [],
+
+    getEvents: function() {
+        return new Promise(resolve => setTimeout(() => resolve(this.events), 500));
+    },
+
+    addEvent: function(event) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                event.id = new Date().getTime().toString();
+                event.createdBy = currentUser.id;
+                event.attendees = [];
+                event.ratings = [];
+                event.comments = [];
+                this.events.push(event);
+                localStorage.setItem('events', JSON.stringify(this.events));
+                resolve(event);
+            }, 500);
+        });
+    },
+
+    updateEvent: function(updatedEvent) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                this.events = this.events.map(event => 
+                    event.id === updatedEvent.id ? {...event, ...updatedEvent} : event
+                );
+                localStorage.setItem('events', JSON.stringify(this.events));
+                resolve(updatedEvent);
+            }, 500);
+        });
+    },
+
+    deleteEvent: function(id) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const eventIndex = this.events.findIndex(e => e.id === id);
+                if (eventIndex !== -1) {
+                    if (this.events[eventIndex].createdBy === currentUser.id || currentUser.role === 'admin') {
+                        this.events.splice(eventIndex, 1);
+                        localStorage.setItem('events', JSON.stringify(this.events));
+                        resolve({ success: true });
+                    } else {
+                        resolve({ success: false, message: 'You do not have permission to delete this event.' });
+                    }
+                } else {
+                    resolve({ success: false, message: 'Event not found.' });
+                }
+            }, 500);
+        });
+    },
+
+    registerAttendee: function(eventId, attendee) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const event = this.events.find(e => e.id === eventId);
+                if (event && event.attendees.length < event.capacity) {
+                    event.attendees.push(attendee);
+                    localStorage.setItem('events', JSON.stringify(this.events));
+                    resolve({ success: true });
+                } else {
+                    resolve({ success: false, message: 'Event is full or not found' });
+                }
+            }, 500);
+        });
+    },
+
+    rateEvent: function(eventId, rating) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const event = this.events.find(e => e.id === eventId);
+                if (event) {
+                    event.ratings.push(rating);
+                    localStorage.setItem('events', JSON.stringify(this.events));
+                    resolve({ success: true });
+                } else {
+                    resolve({ success: false, message: 'Event not found' });
+                }
+            }, 500);
+        });
+    },
+
+    addComment: function(eventId, comment) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const event = this.events.find(e => e.id === eventId);
+                if (event) {
+                    event.comments.push(comment);
+                    localStorage.setItem('events', JSON.stringify(this.events));
+                    resolve({ success: true });
+                } else {
+                    resolve({ success: false, message: 'Event not found' });
+                }
+            }, 500);
+        });
+    },
+
+    registerUser: function(user) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                if (this.users.find(u => u.email === user.email)) {
+                    resolve({ success: false, message: 'User already exists' });
+                } else {
+                    user.id = new Date().getTime().toString();
+                    this.users.push(user);
+                    localStorage.setItem('users', JSON.stringify(this.users));
+                    resolve({ success: true, user });
+                }
+            }, 500);
+        });
+    },
+
+    loginUser: function(email, password) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const user = this.users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    resolve({ success: true, user });
+                } else {
+                    resolve({ success: false, message: 'Invalid credentials' });
+                }
+            }, 500);
+        });
+    }
+};
+
+
+i18next
+  .init({
+    lng: 'en',
+    fallbackLng: 'en',
+    debug: true,
+    interpolation: {
+      escapeValue: false
+    },
+    resources: {
+      en: {
+        translation: {
+          navTitle: "Advanced Event Management System",
+          navSearch: "Search",
+          navAddEvent: "Add Event",
+          navStats: "Statistics",
+          navExport: "Export Events",
+          navAuth: "Login / Register",
+          navDarkMode: "Dark Mode",
+          cookieConsent: "This website uses cookies to ensure you get the best experience on our website.",
+          cookieConsentOK: "Got it!",
+          loading: "Loading...",
+          addEventTitle: "Add New Event",
+          editEventTitle: "Edit Event",
+          eventNameLabel: "Event Name",
+          eventDescriptionLabel: "Event Description",
+          eventDateTimeLabel: "Event Date & Time",
+          eventLocationLabel: "Event Location",
+          eventCapacityLabel: "Capacity",
+          eventPriceLabel: "Price ($)",
+          eventCategoryLabel: "Event Category",
+          eventTagsLabel: "Event Tags (comma-separated)",
+          saveEventButton: "Save Event",
+          updateEventButton: "Update Event",
+          resetFormButton: "Reset Form",
+          loginRequired: "Please log in to perform this action",
+          eventAddedSuccess: "Event added successfully",
+          eventUpdatedSuccess: "Event updated successfully",
+          eventDeletedSuccess: "Event deleted successfully",
+          confirmDeleteEvent: "Are you sure you want to delete this event?",
+          rateEventPrompt: "Rate this event from 1 to 5",
+          addCommentPrompt: "Add your comment",
+          ratingAddedSuccess: "Rating added successfully",
+          commentAddedSuccess: "Comment added successfully",
+          invalidRating: "Invalid rating. Please enter a number between 1 and 5.",
+          loginSuccess: "Logged in successfully",
+          registrationSuccess: "Registered successfully",
+          logoutSuccess: "Logged out successfully",
+          welcome: "Welcome, {{name}}",
+          loginRegister: "Login / Register",
+          statsModalTitle: "Event Statistics",
+          overallStats: "Overall Statistics",
+          totalEvents: "Total Events",
+          totalAttendees: "Total Attendees",
+          averageCapacity: "Average Capacity",
+          averageRating: "Average Rating",
+          eventsByCategory: "Events by Category",
+          attendanceOverTime: "Attendance Over Time",
+          topEvents: "Top Events",
+          close: "Close",
+          exportStats: "Export Statistics",
+          eventDetailsModalTitle: "Event Details",
+          date: "Date",
+          location: "Location",
+          capacity: "Capacity",
+          price: "Price",
+          category: "Category",
+          attendees: "Attendees",
+          ratings: "Ratings",
+          comments: "Comments",
+          register: "Register for Event",
+          registrationModalTitle: "Event Registration",
+          nameLabel: "Full Name",
+          emailLabel: "Email Address",
+          phoneLabel: "Phone Number",
+          submitRegistration: "Submit Registration",
+          authModalTitle: "Login / Register",
+          loginTab: "Login",
+          registerTab: "Register",
+          passwordLabel: "Password",
+          loginButton: "Login",
+          roleLabel: "Role",
+          roleUser: "User",
+          roleOrganizer: "Organizer",
+          roleAdmin: "Admin",
+          registerButton: "Register",
+          seriesEvent: "Series Event",
+          notRatedYet: "Not rated yet",
+          editButton: "Edit",
+          deleteButton: "Delete",
+          detailsButton: "Details",
+          rateEventButton: "Rate Event",
+          addCommentButton: "Add Comment",
+          shareButton: "Share",
+          exportButton: "Export",
+          applyFiltersButton: "Apply Filters",
+          changeLanguageButton: "Change Language"
+        }
+      },
+      es: {
+        translation: {
+          navTitle: "Sistema Avanzado de Gestión de Eventos",
+          navSearch: "Buscar",
+          navAddEvent: "Añadir Evento",
+          navStats: "Estadísticas",
+          navExport: "Exportar Eventos",
+          navAuth: "Iniciar Sesión / Registrarse",
+          navDarkMode: "Modo Oscuro",
+          cookieConsent: "Este sitio web utiliza cookies para garantizar que obtenga la mejor experiencia en nuestro sitio web.",
+          cookieConsentOK: "¡Entendido!",
+          loading: "Cargando...",
+          addEventTitle: "Añadir Nuevo Evento",
+          editEventTitle: "Editar Evento",
+          eventNameLabel: "Nombre del Evento",
+          eventDescriptionLabel: "Descripción del Evento",
+          eventDateTimeLabel: "Fecha y Hora del Evento",
+          eventLocationLabel: "Ubicación del Evento",
+          eventCapacityLabel: "Capacidad",
+          eventPriceLabel: "Precio ($)",
+          eventCategoryLabel: "Categoría del Evento",
+          eventTagsLabel: "Etiquetas del Evento (separadas por comas)",
+          saveEventButton: "Guardar Evento",
+          updateEventButton: "Actualizar Evento",
+          resetFormButton: "Restablecer Formulario",
+          loginRequired: "Por favor, inicie sesión para realizar esta acción",
+          eventAddedSuccess: "Evento añadido con éxito",
+          eventUpdatedSuccess: "Evento actualizado con éxito",
+          eventDeletedSuccess: "Evento eliminado con éxito",
+          confirmDeleteEvent: "¿Está seguro de que desea eliminar este evento?",
+          rateEventPrompt: "Califica este evento del 1 al 5",
+          addCommentPrompt: "Añade tu comentario",
+          ratingAddedSuccess: "Calificación añadida con éxito",
+          commentAddedSuccess: "Comentario añadido con éxito",
+          invalidRating: "Calificación inválida. Por favor, ingrese un número entre 1 y 5.",
+          loginSuccess: "Sesión iniciada con éxito",
+          registrationSuccess: "Registro completado con éxito",
+          logoutSuccess: "Sesión cerrada con éxito",
+          welcome: "Bienvenido, {{name}}",
+          loginRegister: "Iniciar Sesión / Registrarse",
+          statsModalTitle: "Estadísticas del Evento",
+          overallStats: "Estadísticas Generales",
+          totalEvents: "Total de Eventos",
+          totalAttendees: "Total de Asistentes",
+          averageCapacity: "Capacidad Promedio",
+          averageRating: "Calificación Promedio",
+          eventsByCategory: "Eventos por Categoría",
+          attendanceOverTime: "Asistencia a lo Largo del Tiempo",
+          topEvents: "Eventos Principales",
+          close: "Cerrar",
+          exportStats: "Exportar Estadísticas",
+          eventDetailsModalTitle: "Detalles del Evento",
+          date: "Fecha",
+          location: "Ubicación",
+          capacity: "Capacidad",
+          price: "Precio",
+          category: "Categoría",
+          attendees: "Asistentes",
+          ratings: "Calificaciones",
+          comments: "Comentarios",
+          register: "Registrarse para el Evento",
+          registrationModalTitle: "Registro de Evento",
+          nameLabel: "Nombre Completo",
+          emailLabel: "Correo Electrónico",
+          phoneLabel: "Número de Teléfono",
+          submitRegistration: "Enviar Registro",
+          authModalTitle: "Iniciar Sesión / Registrarse",
+          loginTab: "Iniciar Sesión",
+          registerTab: "Registrarse",
+          passwordLabel: "Contraseña",
+          loginButton: "Iniciar Sesión",
+          roleLabel: "Rol",
+          roleUser: "Usuario",
+          roleOrganizer: "Organizador",
+          roleAdmin: "Administrador",
+          registerButton: "Registrarse",
+          seriesEvent: "Evento en Serie",
+          notRatedYet: "Aún no calificado",
+          editButton: "Editar",
+          deleteButton: "Eliminar",
+          detailsButton: "Detalles",
+          rateEventButton: "Calificar Evento",
+          addCommentButton: "Añadir Comentario",
+          shareButton: "Compartir",
+          exportButton: "Exportar",
+          applyFiltersButton: "Aplicar Filtros",
+          changeLanguageButton: "Cambiar Idioma"
+        }
+      },
+      hi: {
+        translation: {
+          navTitle: "उन्नत कार्यक्रम प्रबंधन प्रणाली",
+          navSearch: "खोज",
+          navAddEvent: "कार्यक्रम जोड़ें",
+          navStats: "आँकड़े",
+          navExport: "कार्यक्रम निर्यात करें",
+          navAuth: "लॉगिन / पंजीकरण",
+          navDarkMode: "डार्क मोड",
+          cookieConsent: "यह वेबसाइट कुकीज़ का उपयोग करती है ताकि आपको हमारी वेबसाइट पर सर्वोत्तम अनुभव मिल सके।",
+          cookieConsentOK: "समझ गया!",
+          loading: "लोड हो रहा है...",
+          addEventTitle: "नया कार्यक्रम जोड़ें",
+          editEventTitle: "कार्यक्रम संपादित करें",
+          eventNameLabel: "कार्यक्रम का नाम",
+          eventDescriptionLabel: "कार्यक्रम का विवरण",
+          eventDateTimeLabel: "कार्यक्रम की तिथि और समय",
+          eventLocationLabel: "कार्यक्रम का स्थान",
+          eventCapacityLabel: "क्षमता",
+          eventPriceLabel: "मूल्य (₹)",
+          eventCategoryLabel: "कार्यक्रम श्रेणी",
+          eventTagsLabel: "कार्यक्रम टैग (अल्पविराम से अलग)",
+          saveEventButton: "कार्यक्रम सहेजें",
+          updateEventButton: "कार्यक्रम अपडेट करें",
+          resetFormButton: "फॉर्म रीसेट करें",
+          loginRequired: "कृपया यह कार्य करने के लिए लॉगिन करें",
+          eventAddedSuccess: "कार्यक्रम सफलतापूर्वक जोड़ा गया",
+          eventUpdatedSuccess: "कार्यक्रम सफलतापूर्वक अपडेट किया गया",
+          eventDeletedSuccess: "कार्यक्रम सफलतापूर्वक हटाया गया",
+          confirmDeleteEvent: "क्या आप वाकई इस कार्यक्रम को हटाना चाहते हैं?",
+          rateEventPrompt: "इस कार्यक्रम को 1 से 5 तक रेट करें",
+          addCommentPrompt: "अपनी टिप्पणी जोड़ें",
+          ratingAddedSuccess: "रेटिंग सफलतापूर्वक जोड़ी गई",
+          commentAddedSuccess: "टिप्पणी सफलतापूर्वक जोड़ी गई",
+          invalidRating: "अमान्य रेटिंग। कृपया 1 से 5 के बीच एक संख्या दर्ज करें।",
+          loginSuccess: "सफलतापूर्वक लॉग इन किया गया",
+          registrationSuccess: "पंजीकरण सफलतापूर्वक पूरा हुआ",
+          logoutSuccess: "सफलतापूर्वक लॉग आउट किया गया",
+          welcome: "स्वागत है, {{name}}",
+          loginRegister: "लॉगिन / पंजीकरण",
+          statsModalTitle: "कार्यक्रम आँकड़े",
+          overallStats: "समग्र आँकड़े",
+          totalEvents: "कुल कार्यक्रम",
+          totalAttendees: "कुल उपस्थित लोग",
+          averageCapacity: "औसत क्षमता",
+          averageRating: "औसत रेटिंग",
+          eventsByCategory: "श्रेणी के अनुसार कार्यक्रम",
+          attendanceOverTime: "समय के साथ उपस्थिति",
+          topEvents: "शीर्ष कार्यक्रम",
+          close: "बंद करें",
+          exportStats: "आँकड़े निर्यात करें",
+          eventDetailsModalTitle: "कार्यक्रम विवरण",
+          date: "तिथि",
+          location: "स्थान",
+          capacity: "क्षमता",
+          price: "मूल्य",
+          category: "श्रेणी",
+          attendees: "उपस्थित लोग",
+          ratings: "रेटिंग",
+          comments: "टिप्पणियाँ",
+          register: "कार्यक्रम के लिए पंजीकरण करें",
+          registrationModalTitle: "कार्यक्रम पंजीकरण",
+          nameLabel: "पूरा नाम",
+          emailLabel: "ईमेल पता",
+          phoneLabel: "फोन नंबर",
+          submitRegistration: "पंजीकरण जमा करें",
+          authModalTitle: "लॉगिन / पंजीकरण",
+          loginTab: "लॉगिन",
+          registerTab: "पंजीकरण",
+          passwordLabel: "पासवर्ड",
+          loginButton: "लॉगिन करें",
+          roleLabel: "भूमिका",
+          roleUser: "उपयोगकर्ता",
+          roleOrganizer: "आयोजक",
+          roleAdmin: "प्रशासक",
+          registerButton: "पंजीकरण करें",
+          seriesEvent: "श्रृंखला कार्यक्रम",
+          notRatedYet: "अभी तक रेट नहीं किया गया",
+          editButton: "संपादित करें",
+          deleteButton: "हटाएं",
+          detailsButton: "विवरण",
+          rateEventButton: "कार्यक्रम को रेट करें",
+          addCommentButton: "टिप्पणी जोड़ें",
+          shareButton: "साझा करें",
+          exportButton: "निर्यात करें",
+          applyFiltersButton: "फ़िल्टर लागू करें",
+          changeLanguageButton: "भाषा बदलें"
+        }
+      },
+      te: {
+        translation: {
+          navTitle: "అధునాతన ఈవెంట్ నిర్వహణ వ్యవస్థ",
+          navSearch: "శోధన",
+          navAddEvent: "ఈవెంట్ జోడించు",
+          navStats: "గణాంకాలు",
+          navExport: "ఈవెంట్లను ఎగుమతి చేయి",
+          navAuth: "లాగిన్ / నమోదు",
+          navDarkMode: "డార్క్ మోడ్",
+          cookieConsent: "మీరు మా వెబ్‌సైట్‌లో ఉత్తమమైన అనుభవాన్ని పొందేందుకు ఈ వెబ్‌సైట్ కుకీలను ఉపయోగిస్తుంది.",
+          cookieConsentOK: "అర్థమైంది!",
+          loading: "లోడ్ అవుతోంది...",
+          addEventTitle: "కొత్త ఈవెంట్ జోడించు",
+          editEventTitle: "ఈవెంట్ సవరించు",
+          eventNameLabel: "ఈవెంట్ పేరు",
+          eventDescriptionLabel: "ఈవెంట్ వివరణ",
+          eventDateTimeLabel: "ఈవెంట్ తేదీ & సమయం",
+          eventLocationLabel: "ఈవెంట్ స్థలం",
+          eventCapacityLabel: "సామర్థ్యం",
+          eventPriceLabel: "ధర (₹)",
+          eventCategoryLabel: "ఈవెంట్ వర్గం",
+          eventTagsLabel: "ఈవెంట్ ట్యాగ్‌లు (కామాతో వేరు చేయబడినవి)",
+          saveEventButton: "ఈవెంట్ సేవ్ చేయి",
+          updateEventButton: "ఈవెంట్ నవీకరించు",
+          resetFormButton: "ఫారమ్ రీసెట్ చేయి",
+          loginRequired: "దయచేసి ఈ చర్యను నిర్వహించడానికి లాగిన్ అవ్వండి",
+          eventAddedSuccess: "ఈవెంట్ విజయవంతంగా జోడించబడింది",
+          eventUpdatedSuccess: "ఈవెంట్ విజయవంతంగా నవీకరించబడింది",
+          eventDeletedSuccess: "ఈవెంట్ విజయవంతంగా తొలగించబడింది",
+          confirmDeleteEvent: "మీరు ఖచ్చితంగా ఈ ఈవెంట్‌ను తొలగించాలనుకుంటున్నారా?",
+          rateEventPrompt: "ఈ ఈవెంట్‌ను 1 నుండి 5 వరకు రేట్ చేయండి",
+          addCommentPrompt: "మీ వ్యాఖ్యను జోడించండి",
+          ratingAddedSuccess: "రేటింగ్ విజయవంతంగా జోడించబడింది",
+          commentAddedSuccess: "వ్యాఖ్య విజయవంతంగా జోడించబడింది",
+          invalidRating: "చెల్లని రేటింగ్. దయచేసి 1 నుండి 5 మధ్య సంఖ్యను నమోదు చేయండి.",
+          loginSuccess: "విజయవంతంగా లాగిన్ అయ్యారు",
+          registrationSuccess: "నమోదు విజయవంతంగా పూర్తయింది",
+          logoutSuccess: "విజయవంతంగా లాగౌట్ అయ్యారు",
+          welcome: "స్వాగతం, {{name}}",
+          loginRegister: "లాగిన్ / నమోదు",
+          statsModalTitle: "ఈవెంట్ గణాంకాలు",
+          overallStats: "మొత్తం గణాంకాలు",
+          totalEvents: "మొత్తం ఈవెంట్లు",
+          totalAttendees: "మొత్తం హాజరైనవారు",
+          averageCapacity: "సగటు సామర్థ్యం",
+          averageRating: "సగటు రేటింగ్",
+          eventsByCategory: "వర్గం ప్రకారం ఈవెంట్లు",
+          attendanceOverTime: "సమయంతో పాటు హాజరు",
+          topEvents: "అగ్ర ఈవెంట్లు",
+          close: "మూసివేయి",
+          exportStats: "గణాంకాలను ఎగుమతి చేయి",
+          eventDetailsModalTitle: "ఈవెంట్ వివరాలు",
+          date: "తేదీ",
+          location: "స్థలం",
+          capacity: "సామర్థ్యం",
+          price: "ధర",
+          category: "వర్గం",
+          attendees: "హాజరైనవారు",
+          ratings: "రేటింగ్‌లు",
+          comments: "వ్యాఖ్యలు",
+          register: "ఈవెంట్ కోసం నమోదు చేసుకోండి",
+          registrationModalTitle: "ఈవెంట్ నమోదు",
+          nameLabel: "పూర్తి పేరు",
+          emailLabel: "ఇమెయిల్ చిరునామా",
+          phoneLabel: "ఫోన్ నంబర్",
+          submitRegistration: "నమోదును సమర్పించండి",
+          authModalTitle: "లాగిన్ / నమోదు",
+          loginTab: "లాగిన్",
+          registerTab: "నమోదు",
+          passwordLabel: "పాస్‌వర్డ్",
+          loginButton: "లాగిన్",
+          roleLabel: "పాత్ర",
+          roleUser: "వినియోగదారు",
+          roleOrganizer: "నిర్వాహకుడు",
+          roleAdmin: "నిర్వాహకుడు",
+          registerButton: "నమోదు చేయి",
+          seriesEvent: "సిరీస్ ఈవెంట్",
+          notRatedYet: "ఇంకా రేట్ చేయబడలేదు",
+          editButton: "సవరించు",
+          deleteButton: "తొలగించు",
+          detailsButton: "వివరాలు",
+          rateEventButton: "ఈవెంట్‌ను రేట్ చేయండి",
+          addCommentButton: "వ్యాఖ్య జోడించండి",
+          shareButton: "షేర్ చేయండి",
+          exportButton: "ఎగుమతి చేయండి",
+          applyFiltersButton: "ఫిల్టర్లను వర్తింపజేయండి",
+          changeLanguageButton: "భాష మార్చండి"
+        }
+      },
+      uk: {
+  translation: {
+    navTitle: "Розширена система управління подіями",
+    navSearch: "Пошук",
+    navAddEvent: "Додати подію",
+    navStats: "Статистика",
+    navExport: "Експорт подій",
+    navAuth: "Вхід / Реєстрація",
+    navDarkMode: "Темний режим",
+    cookieConsent: "Цей веб-сайт використовує файли cookie, щоб забезпечити вам найкращий досвід на нашому веб-сайті.",
+    cookieConsentOK: "Зрозуміло!",
+    loading: "Завантаження...",
+    addEventTitle: "Додати нову подію",
+    editEventTitle: "Редагувати подію",
+    eventNameLabel: "Назва події",
+    eventDescriptionLabel: "Опис події",
+    eventDateTimeLabel: "Дата та час події",
+    eventLocationLabel: "Місце проведення",
+    eventCapacityLabel: "Місткість",
+    eventPriceLabel: "Ціна (₴)",
+    eventCategoryLabel: "Категорія події",
+    eventTagsLabel: "Теги події (розділені комами)",
+    saveEventButton: "Зберегти подію",
+    updateEventButton: "Оновити подію",
+    resetFormButton: "Скинути форму",
+    loginRequired: "Будь ласка, увійдіть для виконання цієї дії",
+    eventAddedSuccess: "Подію успішно додано",
+    eventUpdatedSuccess: "Подію успішно оновлено",
+    eventDeletedSuccess: "Подію успішно видалено",
+    confirmDeleteEvent: "Ви впевнені, що хочете видалити цю подію?",
+    rateEventPrompt: "Оцініть цю подію від 1 до 5",
+    addCommentPrompt: "Додайте свій коментар",
+    ratingAddedSuccess: "Оцінку успішно додано",
+    commentAddedSuccess: "Коментар успішно додано",
+    invalidRating: "Недійсна оцінка. Будь ласка, введіть число від 1 до 5.",
+    loginSuccess: "Успішний вхід",
+    registrationSuccess: "Успішна реєстрація",
+    logoutSuccess: "Успішний вихід",
+    welcome: "Ласкаво просимо, {{name}}",
+    loginRegister: "Вхід / Реєстрація",
+    statsModalTitle: "Статистика подій",
+    overallStats: "Загальна статистика",
+    totalEvents: "Всього подій",
+    totalAttendees: "Всього учасників",
+    averageCapacity: "Середня місткість",
+    averageRating: "Середня оцінка",
+    eventsByCategory: "Події за категоріями",
+    attendanceOverTime: "Відвідуваність з часом",
+    topEvents: "Найкращі події",
+    close: "Закрити",
+    exportStats: "Експорт статистики",
+    eventDetailsModalTitle: "Деталі події",
+    date: "Дата",
+    location: "Місце",
+    capacity: "Місткість",
+    price: "Ціна",
+    category: "Категорія",
+    attendees: "Учасники",
+    ratings: "Оцінки",
+    comments: "Коментарі",
+    register: "Зареєструватися на подію",
+    registrationModalTitle: "Реєстрація на подію",
+    nameLabel: "Повне ім'я",
+    emailLabel: "Електронна пошта",
+    phoneLabel: "Номер телефону",
+    submitRegistration: "Відправити реєстрацію",
+    authModalTitle: "Вхід / Реєстрація",
+    loginTab: "Вхід",
+    registerTab: "Реєстрація",
+    passwordLabel: "Пароль",
+    loginButton: "Увійти",
+    roleLabel: "Роль",
+    roleUser: "Користувач",
+    roleOrganizer: "Організатор",
+    roleAdmin: "Адміністратор",
+    registerButton: "Зареєструватися",
+    seriesEvent: "Серія подій",
+    notRatedYet: "Ще не оцінено",
+    editButton: "Редагувати",
+    deleteButton: "Видалити",
+    detailsButton: "Деталі",
+    rateEventButton: "Оцінити подію",
+    addCommentButton: "Додати коментар",
+    shareButton: "Поділитися",
+    exportButton: "Експорт",
+    applyFiltersButton: "Застосувати фільтри",
+    changeLanguageButton: "Змінити мову"
+  }
+},
+fr: {
+  translation: {
+    navTitle: "Système Avancé de Gestion d'Événements",
+    navSearch: "Rechercher",
+    navAddEvent: "Ajouter un Événement",
+    navStats: "Statistiques",
+    navExport: "Exporter les Événements",
+    navAuth: "Connexion / Inscription",
+    navDarkMode: "Mode Sombre",
+    cookieConsent: "Ce site utilise des cookies pour vous garantir la meilleure expérience sur notre site.",
+    cookieConsentOK: "Compris !",
+    loading: "Chargement...",
+    addEventTitle: "Ajouter un Nouvel Événement",
+    editEventTitle: "Modifier l'Événement",
+    eventNameLabel: "Nom de l'Événement",
+    eventDescriptionLabel: "Description de l'Événement",
+    eventDateTimeLabel: "Date et Heure de l'Événement",
+    eventLocationLabel: "Lieu de l'Événement",
+    eventCapacityLabel: "Capacité",
+    eventPriceLabel: "Prix (€)",
+    eventCategoryLabel: "Catégorie de l'Événement",
+    eventTagsLabel: "Tags de l'Événement (séparés par des virgules)",
+    saveEventButton: "Enregistrer l'Événement",
+    updateEventButton: "Mettre à Jour l'Événement",
+    resetFormButton: "Réinitialiser le Formulaire",
+    loginRequired: "Veuillez vous connecter pour effectuer cette action",
+    eventAddedSuccess: "Événement ajouté avec succès",
+    eventUpdatedSuccess: "Événement mis à jour avec succès",
+    eventDeletedSuccess: "Événement supprimé avec succès",
+    confirmDeleteEvent: "Êtes-vous sûr de vouloir supprimer cet événement ?",
+    rateEventPrompt: "Notez cet événement de 1 à 5",
+    addCommentPrompt: "Ajoutez votre commentaire",
+    ratingAddedSuccess: "Note ajoutée avec succès",
+    commentAddedSuccess: "Commentaire ajouté avec succès",
+    invalidRating: "Note invalide. Veuillez entrer un nombre entre 1 et 5.",
+    loginSuccess: "Connexion réussie",
+    registrationSuccess: "Inscription réussie",
+    logoutSuccess: "Déconnexion réussie",
+    welcome: "Bienvenue, {{name}}",
+    loginRegister: "Connexion / Inscription",
+    statsModalTitle: "Statistiques de l'Événement",
+    overallStats: "Statistiques Globales",
+    totalEvents: "Total des Événements",
+    totalAttendees: "Total des Participants",
+    averageCapacity: "Capacité Moyenne",
+    averageRating: "Note Moyenne",
+    eventsByCategory: "Événements par Catégorie",
+    attendanceOverTime: "Fréquentation au Fil du Temps",
+    topEvents: "Meilleurs Événements",
+    close: "Fermer",
+    exportStats: "Exporter les Statistiques",
+    eventDetailsModalTitle: "Détails de l'Événement",
+    date: "Date",
+    location: "Lieu",
+    capacity: "Capacité",
+    price: "Prix",
+    category: "Catégorie",
+    attendees: "Participants",
+    ratings: "Notes",
+    comments: "Commentaires",
+    register: "S'inscrire à l'Événement",
+    registrationModalTitle: "Inscription à l'Événement",
+    nameLabel: "Nom Complet",
+    emailLabel: "Adresse Email",
+    phoneLabel: "Numéro de Téléphone",
+    submitRegistration: "Soumettre l'Inscription",
+    authModalTitle: "Connexion / Inscription",
+    loginTab: "Connexion",
+    registerTab: "Inscription",
+    passwordLabel: "Mot de Passe",
+    loginButton: "Connexion",
+    roleLabel: "Rôle",
+    roleUser: "Utilisateur",
+    roleOrganizer: "Organisateur",
+    roleAdmin: "Administrateur",
+    registerButton: "Inscription",
+    seriesEvent: "Événement en Série",
+    notRatedYet: "Pas encore noté",
+    editButton: "Modifier",
+    deleteButton: "Supprimer",
+    detailsButton: "Détails",
+    rateEventButton: "Noter l'Événement",
+    addCommentButton: "Ajouter un Commentaire",
+    shareButton: "Partager",
+    exportButton: "Exporter",
+    applyFiltersButton: "Appliquer les Filtres",
+    changeLanguageButton: "Changer de Langue"
+  }
+}
+,
+de: {
+  translation: {
+    navTitle: "Erweitertes Event-Management-System",
+    navSearch: "Suchen",
+    navAddEvent: "Event hinzufügen",
+    navStats: "Statistiken",
+    navExport: "Events exportieren",
+    navAuth: "Anmelden / Registrieren",
+    navDarkMode: "Dunkelmodus",
+    cookieConsent: "Diese Website verwendet Cookies, um sicherzustellen, dass Sie die beste Erfahrung auf unserer Website erhalten.",
+    cookieConsentOK: "Verstanden!",
+    loading: "Laden...",
+    addEventTitle: "Neues Event hinzufügen",
+    editEventTitle: "Event bearbeiten",
+    eventNameLabel: "Eventname",
+    eventDescriptionLabel: "Eventbeschreibung",
+    eventDateTimeLabel: "Eventdatum & -zeit",
+    eventLocationLabel: "Eventort",
+    eventCapacityLabel: "Kapazität",
+    eventPriceLabel: "Preis (€)",
+    eventCategoryLabel: "Eventkategorie",
+    eventTagsLabel: "Event-Tags (durch Kommas getrennt)",
+    saveEventButton: "Event speichern",
+    updateEventButton: "Event aktualisieren",
+    resetFormButton: "Formular zurücksetzen",
+    loginRequired: "Bitte melden Sie sich an, um diese Aktion auszuführen",
+    eventAddedSuccess: "Event erfolgreich hinzugefügt",
+    eventUpdatedSuccess: "Event erfolgreich aktualisiert",
+    eventDeletedSuccess: "Event erfolgreich gelöscht",
+    confirmDeleteEvent: "Sind Sie sicher, dass Sie dieses Event löschen möchten?",
+    rateEventPrompt: "Bewerten Sie dieses Event von 1 bis 5",
+    addCommentPrompt: "Fügen Sie Ihren Kommentar hinzu",
+    ratingAddedSuccess: "Bewertung erfolgreich hinzugefügt",
+    commentAddedSuccess: "Kommentar erfolgreich hinzugefügt",
+    invalidRating: "Ungültige Bewertung. Bitte geben Sie eine Zahl zwischen 1 und 5 ein.",
+    loginSuccess: "Erfolgreich angemeldet",
+    registrationSuccess: "Erfolgreich registriert",
+    logoutSuccess: "Erfolgreich abgemeldet",
+    welcome: "Willkommen, {{name}}",
+    loginRegister: "Anmelden / Registrieren",
+    statsModalTitle: "Event-Statistiken",
+    overallStats: "Gesamtstatistiken",
+    totalEvents: "Gesamtanzahl der Events",
+    totalAttendees: "Gesamtanzahl der Teilnehmer",
+    averageCapacity: "Durchschnittliche Kapazität",
+    averageRating: "Durchschnittliche Bewertung",
+    eventsByCategory: "Events nach Kategorie",
+    attendanceOverTime: "Teilnahme über die Zeit",
+    topEvents: "Top-Events",
+    close: "Schließen",
+    exportStats: "Statistiken exportieren",
+    eventDetailsModalTitle: "Eventdetails",
+    date: "Datum",
+    location: "Ort",
+    capacity: "Kapazität",
+    price: "Preis",
+    category: "Kategorie",
+    attendees: "Teilnehmer",
+    ratings: "Bewertungen",
+    comments: "Kommentare",
+    register: "Für Event registrieren",
+    registrationModalTitle: "Eventregistrierung",
+    nameLabel: "Vollständiger Name",
+    emailLabel: "E-Mail-Adresse",
+    phoneLabel: "Telefonnummer",
+    submitRegistration: "Registrierung abschicken",
+    authModalTitle: "Anmelden / Registrieren",
+    loginTab: "Anmelden",
+    registerTab: "Registrieren",
+    passwordLabel: "Passwort",
+    loginButton: "Anmelden",
+    roleLabel: "Rolle",
+    roleUser: "Benutzer",
+    roleOrganizer: "Veranstalter",
+    roleAdmin: "Administrator",
+    registerButton: "Registrieren",
+    seriesEvent: "Serien-Event",
+    notRatedYet: "Noch nicht bewertet",
+    editButton: "Bearbeiten",
+    deleteButton: "Löschen",
+    detailsButton: "Details",
+    rateEventButton: "Event bewerten",
+    addCommentButton: "Kommentar hinzufügen",
+    shareButton: "Teilen",
+    exportButton: "Exportieren",
+    applyFiltersButton: "Filter anwenden",
+    changeLanguageButton: "Sprache ändern"
+  }
+}, 
+ja: {
+  translation: {
+    navTitle: "高度イベント管理システム",
+    navSearch: "検索",
+    navAddEvent: "イベント追加",
+    navStats: "統計",
+    navExport: "イベントをエクスポート",
+    navAuth: "ログイン / 登録",
+    navDarkMode: "ダークモード",
+    cookieConsent: "このウェブサイトはクッキーを使用して、最高の体験を提供します。",
+    cookieConsentOK: "了解しました！",
+    loading: "読み込み中...",
+    addEventTitle: "新しいイベントを追加",
+    editEventTitle: "イベントを編集",
+    eventNameLabel: "イベント名",
+    eventDescriptionLabel: "イベントの説明",
+    eventDateTimeLabel: "イベントの日付と時間",
+    eventLocationLabel: "イベントの場所",
+    eventCapacityLabel: "定員",
+    eventPriceLabel: "価格 (¥)",
+    eventCategoryLabel: "イベントのカテゴリ",
+    eventTagsLabel: "イベントタグ (カンマ区切り)",
+    saveEventButton: "イベントを保存",
+    updateEventButton: "イベントを更新",
+    resetFormButton: "フォームをリセット",
+    loginRequired: "この操作を行うにはログインしてください",
+    eventAddedSuccess: "イベントが正常に追加されました",
+    eventUpdatedSuccess: "イベントが正常に更新されました",
+    eventDeletedSuccess: "イベントが正常に削除されました",
+    confirmDeleteEvent: "このイベントを削除してもよろしいですか？",
+    rateEventPrompt: "このイベントを1から5で評価してください",
+    addCommentPrompt: "コメントを追加",
+    ratingAddedSuccess: "評価が正常に追加されました",
+    commentAddedSuccess: "コメントが正常に追加されました",
+    invalidRating: "無効な評価。1から5の数字を入力してください。",
+    loginSuccess: "ログインに成功しました",
+    registrationSuccess: "登録に成功しました",
+    logoutSuccess: "ログアウトに成功しました",
+    welcome: "ようこそ, {{name}}",
+    loginRegister: "ログイン / 登録",
+    statsModalTitle: "イベント統計",
+    overallStats: "全体統計",
+    totalEvents: "イベントの総数",
+    totalAttendees: "参加者の総数",
+    averageCapacity: "平均定員",
+    averageRating: "平均評価",
+    eventsByCategory: "カテゴリ別イベント",
+    attendanceOverTime: "時間経過による出席",
+    topEvents: "トップイベント",
+    close: "閉じる",
+    exportStats: "統計をエクスポート",
+    eventDetailsModalTitle: "イベントの詳細",
+    date: "日付",
+    location: "場所",
+    capacity: "定員",
+    price: "価格",
+    category: "カテゴリ",
+    attendees: "参加者",
+    ratings: "評価",
+    comments: "コメント",
+    register: "イベントに登録",
+    registrationModalTitle: "イベント登録",
+    nameLabel: "氏名",
+    emailLabel: "メールアドレス",
+    phoneLabel: "電話番号",
+    submitRegistration: "登録を送信",
+    authModalTitle: "ログイン / 登録",
+    loginTab: "ログイン",
+    registerTab: "登録",
+    passwordLabel: "パスワード",
+    loginButton: "ログイン",
+    roleLabel: "役割",
+    roleUser: "ユーザー",
+    roleOrganizer: "オーガナイザー",
+    roleAdmin: "管理者",
+    registerButton: "登録",
+    seriesEvent: "シリーズイベント",
+    notRatedYet: "まだ評価されていません",
+    editButton: "編集",
+    deleteButton: "削除",
+    detailsButton: "詳細",
+    rateEventButton: "イベントを評価",
+    addCommentButton: "コメントを追加",
+    shareButton: "共有",
+    exportButton: "エクスポート",
+    applyFiltersButton: "フィルターを適用",
+    changeLanguageButton: "言語を変更"
+  }
+}
+
+
+
+    }
+  })
+  .then(function(t) {
+    updateLanguage(navigator.language);
+    displayEvents();
+    initializeDarkMode();
+  });
+
+
+
+  function updateLanguage(lng) {
+    i18next.changeLanguage(lng, (err, t) => {
+        if (err) return console.log('Something went wrong loading', err);
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            element.innerHTML = i18next.t(element.getAttribute('data-i18n'));
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            element.placeholder = i18next.t(element.getAttribute('data-i18n-placeholder'));
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
+    const decreaseBtn = document.getElementById('decreaseFontSize');
+    const resetBtn = document.getElementById('resetFontSize');
+    const increaseBtn = document.getElementById('increaseFontSize');
+    const highContrastToggle = document.getElementById('highContrastToggle');
+
+    let currentFontSize = 100;
+
+    decreaseBtn.addEventListener('click', () => {
+        if (currentFontSize > 70) {
+            currentFontSize -= 10;
+            body.style.fontSize = `${currentFontSize}%`;
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        currentFontSize = 100;
+        body.style.fontSize = '100%';
+    });
+
+    increaseBtn.addEventListener('click', () => {
+        if (currentFontSize < 150) {
+            currentFontSize += 10;
+            body.style.fontSize = `${currentFontSize}%`;
+        }
+    });
+
+    highContrastToggle.addEventListener('change', () => {
+        body.classList.toggle('high-contrast');
+    });
+});
+
+
+
+
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+function showLoading() {
+    document.getElementById('loadingSpinner').style.display = 'block';
+}
+
+function hideLoading() {
+    document.getElementById('loadingSpinner').style.display = 'none';
+}
+
+function displayEvents(page = 1, filters = {}) {
+    showLoading();
+    const eventList = document.getElementById('mainContent');
+    eventList.innerHTML = '';
+
+    mockApi.getEvents().then(events => {
+        hideLoading();
+        let filteredEvents = events;
+        
+        if (filters.searchTerm) {
+            filteredEvents = filteredEvents.filter(event => 
+                event.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+                event.description.toLowerCase().includes(filters.searchTerm.toLowerCase())
+            );
+        }
+
+        if (filters.category) {
+            filteredEvents = filteredEvents.filter(event => event.category === filters.category);
+        }
+
+        if (filters.dateRange) {
+            filteredEvents = filteredEvents.filter(event => {
+                const eventDate = new Date(event.dateTime);
+                return eventDate >= filters.dateRange[0] && eventDate <= filters.dateRange[1];
+            });
+        }
+
+        if (filters.priceRange) {
+            filteredEvents = filteredEvents.filter(event => {
+                const price = parseFloat(event.price);
+                return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+            });
+        }
+
+        if (filters.tags) {
+            const filterTags = filters.tags.toLowerCase().split(',').map(tag => tag.trim());
+            filteredEvents = filteredEvents.filter(event => 
+                event.tags && event.tags.some(tag => filterTags.includes(tag.toLowerCase()))
+            );
+        }
+
+        if (filteredEvents.length === 0) {
+            eventList.innerHTML = '<div class="col-12"><p class="text-center" data-i18n="noEventsFound">No events found.</p></div>';
+            return;
+        }
+
+        const startIndex = (page - 1) * eventsPerPage;
+        const endIndex = startIndex + eventsPerPage;
+        const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
+
+        paginatedEvents.forEach(event => {
+            const eventCard = createEventCard(event);
+            eventList.appendChild(eventCard);
+        });
+
+        displayPagination(filteredEvents.length, page);
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const cookieConsent = document.getElementById('cookieConsent');
+    const cookieConsentOK = document.getElementById('cookieConsentOK');
+
+    if (!localStorage.getItem('cookieConsent')) {
+        cookieConsent.classList.add('show');
+    }
+
+    cookieConsentOK.addEventListener('click', function() {
+        localStorage.setItem('cookieConsent', 'true');
+        cookieConsent.classList.remove('show');
+    });
+});
+
+
+function createEventCard(event) {
+    const eventCard = document.createElement('div');
+    eventCard.classList.add('col-md-6', 'col-lg-4', 'mb-4', 'fade-in');
+    eventCard.setAttribute('data-event-id', event.id);
+    eventCard.innerHTML = `
+        <div class="card event-card h-100">
+            ${event.image ? `<img src="${event.image}" class="card-img-top event-image" alt="${event.name}">` : ''}
+            ${event.series ? `<div class="event-series-indicator" data-i18n="seriesEvent">${i18next.t('seriesEvent')}</div>` : ''}
+            <div class="card-body">
+                <h5 class="card-title">${event.name}</h5>
+                <p class="card-text">${event.description.substring(0, 100)}...</p>
+                <p class="card-text"><small class="text-muted"><strong data-i18n="date">Date:</strong> ${formatDate(event.dateTime)}</small></p>
+                <p class="card-text"><small class="text-muted"><strong data-i18n="location">Location:</strong> ${event.location}</small></p>
+                <p class="card-text"><small class="text-muted"><strong data-i18n="capacity">Capacity:</strong> ${event.attendees.length}/${event.capacity}</small></p>
+                <p class="card-text"><small class="text-muted"><strong data-i18n="price">Price:</strong> $${parseFloat(event.price).toFixed(2)}</small></p>
+                <p class="card-text"><small class="text-muted"><strong data-i18n="category">Category:</strong> ${event.category}</small></p>
+                <div class="star-rating">
+                    ${getStarRating(event.ratings)}
+                </div>
+                ${event.tags ? `<div class="mt-2">${event.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-outline-primary" onclick="editEvent('${event.id}')" data-i18n="editButton">Edit</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteEvent('${event.id}')" data-i18n="deleteButton">Delete</button>
+                <button class="btn btn-sm btn-outline-info" onclick="showEventDetails('${event.id}')" data-i18n="detailsButton">Details</button>
+            </div>
+        </div>
+    `;
+    return eventCard;
+}
+
+function getStarRating(ratings) {
+    if (ratings.length === 0) return i18next.t('notRatedYet');
+    const averageRating = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+    const fullStars = Math.floor(averageRating);
+    const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
+    
+    return `${'<i class="fas fa-star"></i>'.repeat(fullStars)}
+            ${halfStar ? '<i class="fas fa-star-half-alt"></i>' : ''}
+            ${'<i class="far fa-star"></i>'.repeat(emptyStars)}
+            (${averageRating.toFixed(1)})`;
+}
+
+function displayPagination(totalEvents, currentPage) {
+    const totalPages = Math.ceil(totalEvents / eventsPerPage);
+    const paginationElement = document.createElement('nav');
+    paginationElement.setAttribute('aria-label', 'Event pagination');
+    paginationElement.innerHTML = `
+        <ul class="pagination justify-content-center">
+            ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
+                <li class="page-item ${page === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${page})">${page}</a>
+                </li>
+            `).join('')}
+        </ul>
+    `;
+    document.getElementById('mainContent').appendChild(paginationElement);
+}
+
+function validateForm() {
+    let isValid = true;
+    document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
+
+    const fields = [
+        { id: 'eventName', errorKey: 'eventNameRequired' },
+        { id: 'eventDescription', errorKey: 'eventDescriptionRequired' },
+        { id: 'eventDateTime', errorKey: 'eventDateTimeRequired' },
+        { id: 'eventLocation', errorKey: 'eventLocationRequired' },
+        { id: 'eventCapacity', errorKey: 'eventCapacityInvalid', condition: value => value > 0 },
+        { id: 'eventPrice', errorKey: 'eventPriceInvalid', condition: value => value >= 0 },
+        { id: 'eventMapURL', errorKey: 'eventMapURLInvalid', condition: value => value === '' || value.includes('https://www.google.com/maps') },
+        { id: 'eventCategory', errorKey: 'eventCategoryRequired' }
+    ];
+
+    fields.forEach(field => {
+        const element = document.getElementById(field.id);
+        const value = element.value.trim();
+        if (value === '' || (field.condition && !field.condition(value))) {
+            showError(`${field.id}Error`, field.errorKey);
+            isValid = false;
+        }
+    });
+
+    return isValid;
+}
+
+function showError(elementId, messageKey) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.innerText = i18next.t(messageKey);
+    errorElement.style.display = 'block';
+}
+
+function resetForm() {
+    document.getElementById('eventForm').reset();
+    document.getElementById('eventId').value = '';
+    document.getElementById('formTitle').innerText = i18next.t('addEventTitle');
+    document.getElementById('saveBtn').innerText = i18next.t('saveEventButton');
+    document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
+    document.getElementById('mediaPreview').innerHTML = '';
+    editingEventId = null;
+}
+
+function handleEventSubmit(e) {
+    e.preventDefault();
+
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    if (!validateForm()) {
+        return;
+    }
+
+    const eventData = {
+        mapURL: document.getElementById('eventMapURL').value,
+        name: document.getElementById('eventName').value.trim(),
+        description: document.getElementById('eventDescription').value.trim(),
+        dateTime: document.getElementById('eventDateTime').value,
+        location: document.getElementById('eventLocation').value.trim(),
+        capacity: parseInt(document.getElementById('eventCapacity').value),
+        price: parseFloat(document.getElementById('eventPrice').value).toFixed(2),
+        category: document.getElementById('eventCategory').value,
+        series: document.getElementById('eventSeries').value,
+        visibility: document.getElementById('eventVisibility').value,
+        registrationDeadline: document.getElementById('eventRegistrationDeadline').value,
+        tags: document.getElementById('eventTags').value.split(',').map(tag => tag.trim()),
+    };
+
+    const imageFile = document.getElementById('eventImage').files[0];
+
+    showLoading();
+
+    if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            eventData.image = e.target.result;
+            submitEventData(eventData);
+        };
+        reader.readAsDataURL(imageFile);
+    } else {
+        submitEventData(eventData);
+    }
+}
+
+function submitEventData(eventData) {
+    const action = editingEventId ? 'updateEvent' : 'addEvent';
+    if (editingEventId) eventData.id = editingEventId;
+
+    mockApi[action](eventData).then((event) => {
+        hideLoading();
+        displayEvents(currentPage);
+        resetForm();
+        showNotification(i18next.t(editingEventId ? 'eventUpdatedSuccess' : 'eventAddedSuccess'));
+        simulateRealtimeUpdate(event, editingEventId ? 'update' : 'add');
+    });
+}
+
+function showSearchPanel() {
+    const searchTemplate = document.getElementById('searchTemplate');
+    const sideContent = document.getElementById('sideContent');
+    sideContent.innerHTML = '';
+    sideContent.appendChild(document.importNode(searchTemplate.content, true));
+
+    initializeAdvancedFilters();
+
+
+    document.getElementById('applyFilters').addEventListener('click', function() {
+        const searchTerm = document.getElementById('searchInput').value;
+        const category = document.getElementById('categoryFilter').value;
+        const dateRange = dateRangeSlider.noUiSlider.get();
+        const priceRange = priceRangeSlider.noUiSlider.get();
+        const tags = document.getElementById('tagFilter').value;
+        
+        currentPage = 1;
+        displayEvents(currentPage, {
+            searchTerm,
+            category,
+            dateRange: dateRange.map(date => new Date(date)),
+            priceRange: priceRange.map(price => parseFloat(price.replace('$', ''))),
+            tags
+        });
+    });
+}
+
+function showAddEventForm() {
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    const addEventTemplate = document.getElementById('addEventTemplate');
+    const sideContent = document.getElementById('sideContent');
+    sideContent.innerHTML = '';
+    sideContent.appendChild(document.importNode(addEventTemplate.content, true));
+
+    initializeEventForm();
+}
+
+function initializeEventForm() {
+    flatpickr("#eventDateTime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today"
+    });
+
+    flatpickr("#eventRegistrationDeadline", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today"
+    });
+
+    document.getElementById('eventImage').addEventListener('change', previewMedia);
+    document.getElementById('eventForm').addEventListener('submit', handleEventSubmit);
+    document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+}
+
+function previewMedia(event) {
+    const file = event.target.files[0];
+    const previewElement = document.getElementById('mediaPreview');
+    
+    if (!previewElement) {
+        console.error("Preview element not found");
+        return;
+    }
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                if (file.type.startsWith('image/')) {
+                    previewElement.innerHTML = `<img src="${e.target.result}" alt="Event Image Preview" class="img-fluid">`;
+                } else {
+                    console.warn("Unsupported file type:", file.type);
+                    previewElement.innerHTML = 'Unsupported file type';
+                }
+            } catch (error) {
+                console.error("Error setting preview:", error);
+                previewElement.innerHTML = 'Error previewing file';
+            }
+        };
+        reader.onerror = function(error) {
+            console.error("Error reading file:", error);
+            previewElement.innerHTML = 'Error reading file';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        previewElement.innerHTML = '';
+    }
+}
+
+function initializeAdvancedFilters() {
+    const dateRangeSlider = document.getElementById('dateRangeSlider');
+    const priceRangeSlider = document.getElementById('priceRangeSlider');
+
+    noUiSlider.create(dateRangeSlider, {
+        start: [Date.now(), Date.now() + 30 * 24 * 60 * 60 * 1000],
+        connect: true,
+        range: {
+            'min': Date.now(),
+            'max': Date.now() + 365 * 24 * 60 * 60 * 1000
+        },
+        format: {
+            to: function (value) {
+                return new Date(value).toISOString().split('T')[0];
+            },
+            from: function (value) {
+                return new Date(value).getTime();
+            }
+        }
+    });
+
+    
+
+    noUiSlider.create(priceRangeSlider, {
+        start: [0, 1000],
+        connect: true,
+        range: {
+            'min': 0,
+            'max': 1000
+        },
+        format: {
+            to: function (value) {
+                return '$' + parseInt(value);
+            },
+            from: function (value) {
+                return Number(value.replace('$', ''));
+            }
+        }
+    });
+
+    dateRangeSlider.noUiSlider.on('update', function (values, handle) {
+        document.getElementById('dateRangeStart').textContent = values[0];
+        document.getElementById('dateRangeEnd').textContent = values[1];
+    });
+
+    priceRangeSlider.noUiSlider.on('update', function (values, handle) {
+        document.getElementById('priceRangeStart').textContent = values[0];
+        document.getElementById('priceRangeEnd').textContent = values[1];
+    });
+
+    document.getElementById('applyFilters').addEventListener('click', applyFilters);
+}
+
+
+function editEvent(id) {
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    mockApi.getEvents().then(events => {
+        const event = events.find(e => e.id === id);
+        if (event) {
+            if (event.createdBy !== currentUser.id && currentUser.role !== 'admin') {
+                showNotification(i18next.t('editPermissionDenied'), 'error');
+                return;
+            }
+            editingEventId = id;
+            populateEventForm(event);
+            showAddEventForm();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+}
+
+function populateEventForm(event) {
+    const fields = ['id', 'name', 'description', 'dateTime', 'location', 'capacity', 'price', 'mapURL', 'category', 'series', 'visibility', 'registrationDeadline'];
+    fields.forEach(field => {
+        const element = document.getElementById(`event${field.charAt(0).toUpperCase() + field.slice(1)}`);
+        if (element) element.value = event[field] || '';
+    });
+    document.getElementById('eventTags').value = event.tags ? event.tags.join(', ') : '';
+    document.getElementById('formTitle').innerText = i18next.t('editEventTitle');
+    document.getElementById('saveBtn').innerText = i18next.t('updateEventButton');
+
+    if (event.image) {
+        const mediaPreview = document.getElementById('mediaPreview');
+        mediaPreview.innerHTML = `<img src="${event.image}" alt="Event Image Preview" class="img-fluid">`;
+    }
+}
+
+function confirmDeleteEvent(id) {
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    if (confirm(i18next.t('confirmDeleteEvent'))) {
+        deleteEvent(id);
+    }
+}
+
+function deleteEvent(id) {
+    showLoading();
+    mockApi.deleteEvent(id).then((response) => {
+        hideLoading();
+        if (response.success) {
+            displayEvents(currentPage);
+            if (editingEventId === id) {
+                resetForm();
+            }
+            showNotification(i18next.t('eventDeletedSuccess'));
+            simulateRealtimeUpdate({ id }, 'delete');
+        } else {
+            showNotification(response.message, 'error');
+        }
+    });
+}
+
+function changePage(page) {
+    currentPage = page;
+    displayEvents(currentPage);
+}
+
+function showEventDetails(id) {
+    currentEventId = id;
+    mockApi.getEvents().then(events => {
+        const event = events.find(e => e.id === id);
+        if (event) {
+            const modal = document.getElementById('eventDetailsModal');
+            modal.setAttribute('data-event-id', event.id);
+            
+            getWeatherForEvent(event.location).then(weather => {
+                const modalBody = document.getElementById('eventDetailsModalBody');
+                modalBody.innerHTML = createEventDetailsHTML(event, weather);
+                
+                document.querySelector('.register-event-btn').addEventListener('click', function() {
+                    showEventRegistrationModal(event.id);
+                });
+
+                const bootstrapModal = new bootstrap.Modal(modal);
+                bootstrapModal.show();
+            });
+        }
+    });
+}
+
+function createEventDetailsHTML(event, weather) {
+    return `
+        <h4>${event.name}</h4>
+        ${event.image ? `<img src="${event.image}" alt="${event.name}" class="img-fluid mb-3">` : ''}
+        <p>${event.description}</p>
+        <p><strong>Date:</strong> ${formatDate(event.dateTime)}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+        <p><strong>Weather:</strong> ${weather}</p>
+        <p><strong>Capacity:</strong> <span id="eventCapacity-${event.id}">${event.attendees.length}/${event.capacity}</span></p>
+        <p><strong>Price:</strong> $${parseFloat(event.price).toFixed(2)}</p>
+        <p><strong>Category:</strong> ${event.category}</p>
+        ${event.tags ? `<p><strong>Tags:</strong> ${event.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</p>` : ''}
+        <h5>Attendees:</h5>
+        <ul id="attendeesList">
+            ${event.attendees.map(attendee => `<li>${attendee.name ? `${attendee.name} (${attendee.email})` : attendee}</li>`).join('')}
+        </ul>
+        <h5>Ratings:</h5>
+        <div class="star-rating">
+            ${getStarRating(event.ratings)}
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-primary register-event-btn" data-event-id="${event.id}">Register for Event</button>
+            <button class="btn btn-secondary" onclick="rateEvent('${event.id}')">Rate Event</button>
+            <button class="btn btn-info" onclick="showCommentForm('${event.id}')">Add Comment</button>
+        </div>
+        <div class="social-share-buttons mt-3">
+            <button class="btn btn-sm btn-outline-primary" onclick="shareOnSocialMedia('${event.id}', 'facebook')"><i class="fab fa-facebook-f"></i> Facebook</button>
+            <button class="btn btn-sm btn-outline-info" onclick="shareOnSocialMedia('${event.id}', 'twitter')"><i class="fab fa-twitter"></i> Twitter</button>
+            <button class="btn btn-sm btn-outline-success" onclick="shareOnSocialMedia('${event.id}', 'whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+        </div>
+        <div class="comment-section mt-4">
+            <h5>Comments:</h5>
+            ${event.comments.map(comment => `
+                <div class="comment">
+                    <p><strong>${comment.user}:</strong> ${comment.text}</p>
+                    <small>${formatDate(comment.date)}</small>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function rateEvent(eventId) {
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    const rating = prompt(i18next.t('rateEventPrompt'));
+    if (rating && !isNaN(rating) && rating >= 1 && rating <= 5) {
+        mockApi.rateEvent(eventId, parseInt(rating)).then(response => {
+            if (response.success) {
+                showNotification(i18next.t('ratingAddedSuccess'));
+                showEventDetails(eventId);
+                simulateRealtimeUpdate({ id: eventId, rating: parseInt(rating) }, 'rate');
+            } else {
+                showNotification(response.message, 'error');
+            }
+        });
+    } else if (rating !== null) {
+        showNotification(i18next.t('invalidRating'), 'error');
+    }
+}
+
+function showCommentForm(eventId) {
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    const commentText = prompt(i18next.t('addCommentPrompt'));
+    if (commentText) {
+        const comment = {
+            user: currentUser.name,
+            text: commentText,
+            date: new Date().toISOString()
+        };
+        mockApi.addComment(eventId, comment).then(response => {
+            if (response.success) {
+                showNotification(i18next.t('commentAddedSuccess'));
+                showEventDetails(eventId);
+                simulateRealtimeUpdate({ id: eventId, comment }, 'comment');
+            } else {
+                showNotification(response.message, 'error');
+            }
+        });
+    }
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+function showAuthModal() {
+    const authModal = new bootstrap.Modal(document.getElementById('authModal'));
+    authModal.show();
+}
+
+const authModal = document.getElementById('authModal');
+authModal.addEventListener('shown.bs.modal', function () {
+    
+    const firstInput = this.querySelector('input');
+    if (firstInput) {
+        firstInput.focus();
+    }
+});
+
+authModal.addEventListener('hidden.bs.modal', function () {
+    
+    const opener = document.getElementById('authButton');
+    if (opener) {
+        opener.focus();
+    }
+});
+
+
+function updateUIForLoggedInUser() {
+    const authButton = document.getElementById('authButton');
+    authButton.textContent = i18next.t('welcome', { name: currentUser.name });
+    authButton.onclick = logout;
+}
+
+function logout() {
+    currentUser = null;
+    const authButton = document.getElementById('authButton');
+    authButton.textContent = i18next.t('loginRegister');
+    authButton.onclick = showAuthModal;
+    showNotification(i18next.t('logoutSuccess'));
+}
+
+function getWeatherForEvent(location) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const weatherConditions = ['Sunny', 'Cloudy', 'Rainy', 'Snowy'];
+            const randomWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+            const randomTemp = Math.floor(Math.random() * 30) + 10;
+            resolve(`${randomWeather}, ${randomTemp}°C`);
+        }, 500);
+    });
+}
+
+function simulateRealtimeUpdate(data, action) {
+    const indicator = document.getElementById('realTimeIndicator');
+    indicator.style.display = 'block';
+    
+    const messages = {
+        add: `New event added: ${data.name}`,
+        update: `Event updated: ${data.name}`,
+        delete: `Event deleted: ID ${data.id}`,
+        rate: `Event rated: ID ${data.id}, Rating: ${data.rating}`,
+        comment: `New comment on event: ID ${data.id}`,
+    };
+    
+    indicator.textContent = messages[action] || `Real-time update: ${action}`;
+    setTimeout(() => {
+        indicator.style.display = 'none';
+    }, 3000);
+
+    console.log(indicator.textContent, data);
+}
+
+function shareOnSocialMedia(eventId, platform) {
+    const event = mockApi.events.find(e => e.id === eventId);
+    if (event) {
+        const text = `Check out this event: ${event.name}`;
+        const url = encodeURIComponent(window.location.href);
+        const shareUrls = {
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+            twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,
+            whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' - ' + window.location.href)}`
+        };
+        window.open(shareUrls[platform], '_blank');
+    }
+}
+
+function updateEventAttendees(eventId) {
+    mockApi.getEvents().then(events => {
+        const event = events.find(e => e.id === eventId);
+        if (event) {
+            const attendeeList = document.getElementById('attendeesList');
+            if (attendeeList) {
+                attendeeList.innerHTML = event.attendees.map(attendee => 
+                    `<li>${attendee.name ? `${attendee.name} (${attendee.email})` : attendee}</li>`
+                ).join('');
+            }
+            updateEventCapacity(event);
+        }
+    });
+}
+
+function updateEventCapacity(event) {
+    const capacityElement = document.getElementById(`eventCapacity-${event.id}`);
+    if (capacityElement) {
+        capacityElement.textContent = `${event.attendees.length}/${event.capacity}`;
+    }
+}
+
+function showEventRegistrationModal(eventId) {
+    currentEventId = eventId;
+    const modal = new bootstrap.Modal(document.getElementById('registrationModal'));
+    modal.show();
+}
+
+function exportEvents() {
+    if (!currentUser) {
+        showNotification(i18next.t('loginRequired'), 'error');
+        return;
+    }
+
+    mockApi.getEvents().then(events => {
+        const csv = Papa.unparse(events);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "events.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    });
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    mockApi.loginUser(email, password).then(response => {
+        if (response.success) {
+            currentUser = response.user;
+            showNotification(i18next.t('loginSuccess'));
+            updateUIForLoggedInUser();
+            bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+        } else {
+            showNotification(response.message, 'error');
+        }
+    });
+}
+
+function handleRegister(e) {
+    e.preventDefault();
+    const user = {
+        name: document.getElementById('registerName').value,
+        email: document.getElementById('registerEmail').value,
+        password: document.getElementById('registerPassword').value,
+        role: document.getElementById('registerRole').value,
+        phone: document.getElementById('registerPhone').value
+    };
+
+    mockApi.registerUser(user).then(response => {
+        if (response.success) {
+            currentUser = response.user;
+            showNotification(i18next.t('registrationSuccess'));
+            updateUIForLoggedInUser();
+            bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+        } else {
+            showNotification(response.message, 'error');
+        }
+    });
+}
+
+function handleEventRegistration(e) {
+    e.preventDefault();
+    
+    const registrationData = {
+        name: document.getElementById('registrationName').value,
+        email: document.getElementById('registrationEmail').value,
+        phone: document.getElementById('registrationPhone').value
+    };
+
+    mockApi.registerAttendee(currentEventId, registrationData).then(response => {
+        if (response.success) {
+            showNotification(i18next.t('registrationSuccess'));
+            bootstrap.Modal.getInstance(document.getElementById('registrationModal')).hide();
+            updateEventAttendees(currentEventId);
+            showEventDetails(currentEventId);
+        } else {
+            showNotification(response.message, 'error');
+        }
+    });
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+}
+
+function initializeDarkMode() {
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeToggle').checked = true;
+    }
+}
+
+
+document.getElementById('searchBtn').addEventListener('click', showSearchPanel);
+document.getElementById('addEventBtn').addEventListener('click', showAddEventForm);
+document.getElementById('exportBtn').addEventListener('click', exportEvents);
+document.getElementById('loginForm').addEventListener('submit', handleLogin);
+document.getElementById('registerForm').addEventListener('submit', handleRegister);
+document.getElementById('eventRegistrationForm').addEventListener('submit', handleEventRegistration);
+document.getElementById('darkModeToggle').addEventListener('change', toggleDarkMode);
+
+document.getElementById('languageToggle').addEventListener('click', function() {
+    const currentLang = i18next.language;
+    let newLang;
+
+    switch (currentLang) {
+        case 'en':
+            newLang = 'es';
+            break;
+        case 'es':
+            newLang = 'hi';
+            break;
+        case 'hi':
+            newLang = 'te';
+            break;
+            case 'te':
+            newLang = 'uk';
+            break;
+            case 'uk':
+            newLang = 'fr';
+            break;
+            case 'fr':
+            newLang = 'de';
+            break;
+            case 'de':
+            newLang = 'ja';
+            break;
+        case 'ja':
+        default:
+            newLang = 'en';
+    }
+
+    updateLanguage(newLang);
+});
+
+
+
+
+    </script>
+</body>
+</html>
+
